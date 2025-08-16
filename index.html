@@ -1,73 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Welcome Jayden Zhu!</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: linear-gradient(135deg, #89f7fe, #66a6ff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jay</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-    .login-box {
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      width: 300px;
-    }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #0b001b; /* deep purple background */
+  color: #e0e0e0;
+  overflow: hidden;
+}
 
-    .login-box h2 {
-      margin-bottom: 20px;
-      color: #333;
-    }
+canvas, .matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
 
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 2px solid #66a6ff;
-      border-radius: 10px;
-      font-size: 16px;
-    }
+.matrix-bg {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(180, 0, 255, 0.05); /* subtle purple glow */
+  white-space: pre;
+  line-height: 1;
+  animation: scrollText 30s linear infinite;
+}
 
-    button {
-      background-color: #66a6ff;
-      color: white;
-      border: none;
-      padding: 12px;
-      width: 100%;
-      font-size: 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
+@keyframes scrollText {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
 
-    button:hover {
-      background-color: #558de8;
-    }
+header {
+  text-align: center;
+  padding: 2rem;
+}
 
-    .welcome {
-      margin-bottom: 30px;
-      font-size: 18px;
-      color: #444;
-    }
-  </style>
+header h1 {
+  font-size: 3.5rem;
+  letter-spacing: 4px;
+  color: #b200ff;
+  text-shadow: 0 0 20px #b200ff, 0 0 40px rgba(178,0,255,0.4);
+}
+
+.tagline {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+nav {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+nav button {
+  background: none;
+  border: none;
+  color: #b200ff;
+  font-size: 1.1rem;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+nav button:hover { color: #fff; }
+
+.section {
+  display: none;
+  text-align: center;
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #d8b3ff;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  background: rgba(10,0,20,0.5);
+  border-radius: 10px;
+}
+
+.section.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section h2 {
+  color: #b200ff;
+}
+
+.music-center {
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10,0,20,0.8);
+  border-radius: 15px;
+  padding: 15px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.music-center img {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  object-fit: cover;
+}
+
+.song-title {
+  color: #b200ff;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.music-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.music-btn {
+  background: #0b001b;
+  border: 2px solid #b200ff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.2rem;
+  color: #b200ff;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s;
+}
+.music-btn:hover { transform: scale(1.2); }
+
+input[type=range] {
+  margin-top: 10px;
+  -webkit-appearance: none;
+  width: 150px;
+  height: 5px;
+  background: rgba(178,0,255,0.3);
+  border-radius: 5px;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #b200ff;
+  border: none;
+}
+</style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>Login</h2>
-    <div class="welcome">Welcome, Jayden Zhu! 🎉</div>
-    <input type="text" placeholder="Username">
-    <input type="password" placeholder="Password">
-    <button>Login</button>
+<div class="matrix-bg">
+01010100110100101010100110100101010100
+00110100101010100110100101010100110100
+</div>
+<canvas id="particles"></canvas>
+
+<header>
+  <h1>Jay</h1>
+  <div class="tagline" id="tagline"></div>
+  <nav>
+    <button onclick="showSection('about')">About Me</button>
+    <button onclick="showSection('work')">What I Do</button>
+    <button onclick="showSection('contact')">Contact Me</button>
+  </nav>
+</header>
+
+<section id="about" class="section active">
+  <h2>About Me</h2>
+  <p>Hey, I’m Jay. I like to play games, experiment with code, and dive into new ideas.</p>
+</section>
+
+<section id="work" class="section">
+  <h2>What I Do</h2>
+  <p>I build digital worlds — from websites to creative tools — and sometimes games that bend the rules.</p>
+</section>
+
+<section id="contact" class="section">
+  <h2>Contact Me</h2>
+  <p>Email me: <a href="mailto:youremail@example.com" style="color:#b200ff;">youremail@example.com</a></p>
+</section>
+
+<audio id="bgMusic" loop>
+  <source src="hi.mp3" type="audio/mpeg">
+</audio>
+
+<div class="music-center">
+  <img src="your-image.jpg" alt="Album Art">
+  <div class="song-title" id="songTitle">Now Playing: hi.mp3</div>
+  <div class="music-buttons">
+    <button class="music-btn" id="playPauseBtn">▶️</button>
   </div>
+  <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">
+</div>
+
+<script>
+const taglines = [
+  "Creating in the shadows, shining in the dark.",
+  "Digital art meets raw curiosity.",
+  "Always building something strange."
+];
+let taglineIndex = 0;
+const taglineEl = document.getElementById("tagline");
+function changeTagline() {
+  taglineEl.textContent = taglines[taglineIndex];
+  taglineIndex = (taglineIndex + 1) % taglines.length;
+}
+changeTagline();
+setInterval(changeTagline, 4000);
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+for (let i = 0; i < 100; i++) {
+  particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*2, speedX: (Math.random()-0.5)*0.5, speedY: (Math.random()-0.5)*0.5 });
+}
+function drawParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#b200ff';
+  particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.speedX; p.y+=p.speedY; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+const music = document.getElementById('bgMusic');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const volumeSlider = document.getElementById('volumeSlider');
+const songTitle = document.getElementById('songTitle');
+
+music.volume = 0.5;
+window.addEventListener('load',()=>{ music.play().then(()=>playPauseBtn.textContent='⏸️').catch(()=>playPauseBtn.textContent='▶️'); });
+playPauseBtn.addEventListener('click',()=>{ if(music.paused){ music.play(); playPauseBtn.textContent='⏸️'; } else { music.pause(); playPauseBtn.textContent='▶️'; } });
+volumeSlider.addEventListener('input',()=>{ music.volume=volumeSlider.value; });
+songTitle.textContent = "Now Playing: " + music.querySelector('source').src.split('/').pop();
+</script>
 </body>
 </html>
