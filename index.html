@@ -11,7 +11,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Poppins', sans-serif;
-  background: #0b001b; /* deep purple background */
+  background: #0b001b;
   color: #e0e0e0;
   overflow: hidden;
 }
@@ -27,7 +27,7 @@ canvas, .matrix-bg {
 
 .matrix-bg {
   font-family: 'Share Tech Mono', monospace;
-  color: rgba(180, 0, 255, 0.05); /* subtle purple glow */
+  color: rgba(180, 0, 255, 0.05);
   white-space: pre;
   line-height: 1;
   animation: scrollText 30s linear infinite;
@@ -81,26 +81,19 @@ nav button:hover { color: #fff; }
   font-size: 1.1rem;
   line-height: 1.6;
   color: #d8b3ff;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
   background: rgba(10,0,20,0.5);
   border-radius: 10px;
 }
-
-.section.active {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
+.section.active { display: block; }
 
 .section h2 {
   color: #b200ff;
 }
 
+/* centered music player */
 .music-center {
   position: fixed;
-  bottom: 50px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(10,0,20,0.8);
@@ -130,7 +123,6 @@ nav button:hover { color: #fff; }
   display: flex;
   gap: 10px;
 }
-
 .music-btn {
   background: #0b001b;
   border: 2px solid #b200ff;
@@ -143,39 +135,36 @@ nav button:hover { color: #fff; }
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.2s;
 }
-.music-btn:hover { transform: scale(1.2); }
+.music-btn:hover { transform:scale(1.2); }
 
 input[type=range] {
-  margin-top: 10px;
-  -webkit-appearance: none;
+  margin-top:10px;
   width: 150px;
-  height: 5px;
+  height:5px;
   background: rgba(178,0,255,0.3);
-  border-radius: 5px;
-  cursor: pointer;
+  border-radius:5px;
+  -webkit-appearance:none;
 }
 input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #b200ff;
-  border: none;
+  -webkit-appearance:none;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#b200ff;
 }
 </style>
 </head>
 <body>
+
 <div class="matrix-bg">
 01010100110100101010100110100101010100
-00110100101010100110100101010100110100
 </div>
 <canvas id="particles"></canvas>
 
 <header>
   <h1>Jay</h1>
-  <div class="tagline" id="tagline"></div>
+  <div class="tagline">Creating in the shadows, shining in the dark.</div>
   <nav>
     <button onclick="showSection('about')">About Me</button>
     <button onclick="showSection('work')">What I Do</button>
@@ -185,7 +174,7 @@ input[type=range]::-webkit-slider-thumb {
 
 <section id="about" class="section active">
   <h2>About Me</h2>
-  <p>Hey, I’m Jay. I like to play games, experiment with code, and dive into new ideas.</p>
+  <p>Hey, I'm Jay. I like to play games, experiment with code, and dive into new ideas.</p>
 </section>
 
 <section id="work" class="section">
@@ -198,13 +187,16 @@ input[type=range]::-webkit-slider-thumb {
   <p>Email me: <a href="mailto:youremail@example.com" style="color:#b200ff;">youremail@example.com</a></p>
 </section>
 
+<!-- AUDIO -->
 <audio id="bgMusic" loop>
-  <source src="https://raw.githubusercontent.com/yodog0608/Nyxora.github.io/main/Travis%20Scott%20-%20KICK%20OUT.mp3" type="audio/mpeg">
+  <source src="https://raw.githubusercontent.com/yodog0608/Nyxora.github.io/main/Travis%20Scott%20-%20KICK%20OUT.mp3"
+          type="audio/mpeg">
 </audio>
 
+<!-- MUSIC PLAYER -->
 <div class="music-center">
-  <img src="your-image.jpg" alt="Album Art">
-  <div class="song-title" id="songTitle">Now Playing: hi.mp3</div>
+  <img src="https://raw.githubusercontent.com/yodog0608/Nyxora.github.io/main/jackboys.jpg" alt="Album Art">
+  <div class="song-title" id="songTitle">Travis Scott - KICK OUT</div>
   <div class="music-buttons">
     <button class="music-btn" id="playPauseBtn">▶️</button>
   </div>
@@ -212,52 +204,43 @@ input[type=range]::-webkit-slider-thumb {
 </div>
 
 <script>
-const taglines = [
-  "Creating in the shadows, shining in the dark.",
-  "Digital art meets raw curiosity.",
-  "Always building something strange."
-];
-let taglineIndex = 0;
-const taglineEl = document.getElementById("tagline");
-function changeTagline() {
-  taglineEl.textContent = taglines[taglineIndex];
-  taglineIndex = (taglineIndex + 1) % taglines.length;
-}
-changeTagline();
-setInterval(changeTagline, 4000);
-
-function showSection(id) {
-  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+// section changer
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-let particles = [];
-function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-for (let i = 0; i < 100; i++) {
-  particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*2, speedX: (Math.random()-0.5)*0.5, speedY: (Math.random()-0.5)*0.5 });
+// particles
+const canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');
+let particles=[];
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<100;i++){
+  particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2,sx:(Math.random()-.5)*.5,sy:(Math.random()-.5)*.5});
 }
-function drawParticles() {
+(function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = '#b200ff';
-  particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.speedX; p.y+=p.speedY; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; });
-  requestAnimationFrame(drawParticles);
-}
-drawParticles();
+  ctx.fillStyle='#b200ff';
+  particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.x+=p.sx;p.y+=p.sy;
+    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+  });
+  requestAnimationFrame(draw);
+})();
 
-const music = document.getElementById('bgMusic');
-const playPauseBtn = document.getElementById('playPauseBtn');
-const volumeSlider = document.getElementById('volumeSlider');
-const songTitle = document.getElementById('songTitle');
+// music player
+const music=document.getElementById('bgMusic');
+const playBtn=document.getElementById('playPauseBtn');
+const volume=document.getElementById('volumeSlider');
+music.volume=0.5;
 
-music.volume = 0.5;
-window.addEventListener('load',()=>{ music.play().then(()=>playPauseBtn.textContent='⏸️').catch(()=>playPauseBtn.textContent='▶️'); });
-playPauseBtn.addEventListener('click',()=>{ if(music.paused){ music.play(); playPauseBtn.textContent='⏸️'; } else { music.pause(); playPauseBtn.textContent='▶️'; } });
-volumeSlider.addEventListener('input',()=>{ music.volume=volumeSlider.value; });
-songTitle.textContent = "Now Playing: " + music.querySelector('source').src.split('/').pop();
+window.addEventListener('load',()=>{
+  music.play().then(()=>playBtn.textContent='⏸️').catch(()=>playBtn.textContent='▶️');
+});
+playBtn.addEventListener('click',()=>{
+  if(music.paused){ music.play(); playBtn.textContent='⏸️'; }
+  else{ music.pause(); playBtn.textContent='▶️'; }
+});
+volume.addEventListener('input',()=>{ music.volume=volume.value; });
 </script>
 </body>
 </html>
