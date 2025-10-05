@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ShadowTrace — IP Lookup</title>
+  <title>NyXorA — IP Lookup</title>
   <style>
     /* Reset */
     *{box-sizing:border-box;margin:0;padding:0}
@@ -52,9 +52,9 @@
 <body>
   <div class="card" role="main">
     <header>
-      <div class="logo" aria-hidden="true"><strong>ST</strong></div>
+      <div class="logo" aria-hidden="true"><strong>NXA</strong></div>
       <div>
-        <h1>ShadowTrace — IP Lookup</h1>
+        <h1>NyXorA — IP Lookup</h1>
         <p class="sub">Enter an IPv4 or IPv6 address, or leave blank to lookup your public IP. No frills, clear data.</p>
       </div>
     </header>
@@ -299,7 +299,7 @@
       const a = document.createElement('a');
       a.href = url;
       const safeIp = (lastReport.ip || 'report').replace(/[^a-z0-9\.\-]/gi, '_');
-      a.download = `shadowtrace_${safeIp}_${new Date().toISOString().replace(/[:]/g,'-')}.json`;
+      a.download = `NyXorA_${safeIp}_${new Date().toISOString().replace(/[:]/g,'-')}.json`;
       a.click();
       URL.revokeObjectURL(url);
     });
