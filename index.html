@@ -1,121 +1,252 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NyXora</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ShadowTrace — IP Lookup</title>
   <style>
-    /* General styling */
-    body {
-      margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background-color: #0d001f;
-      color: #fff;
-      text-align: center;
+    /* Basic reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: 'SFMono-Regular', ui-monospace, SFMono, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      background: radial-gradient(ellipse at 10% 10%, #0b0c0d 0%, #060606 40%, #040303 100%);
+      color:#d6d6d6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;align-items:center;justify-content:center;padding:40px;
     }
 
-    h1 {
-      font-size: 3rem;
-      margin-top: 60px;
-      color: #d08aff;
-      text-shadow: 0 0 20px #d08aff, 0 0 40px #a64dff;
+    /* Grimy card */
+    .card{
+      width:720px;max-width:96%;background:linear-gradient(180deg, rgba(12,12,12,0.9), rgba(8,8,8,0.7));
+      border-radius:14px;padding:28px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 40px rgba(0,0,0,0.7), inset 0 -2px 12px rgba(255,255,255,0.02);
+      position:relative;overflow:hidden;
     }
 
-    h2 {
-      font-size: 1.2rem;
-      font-weight: normal;
-      color: #c9a6ff;
-      margin-bottom: 80px;
+    /* subtle film grain overlay */
+    .card::after{
+      content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);background-size:3px 3px;opacity:0.12;mix-blend-mode:overlay
     }
 
-    h3 {
-      font-size: 2rem;
-      margin-bottom: 30px;
-      color: #e1b7ff;
-      text-shadow: 0 0 15px #b37fff;
-    }
+    header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .logo{width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,#161616,#0a0a0a);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.03)}
+    .logo strong{font-size:16px;letter-spacing:1px;color:#f3f3f3}
 
-    .features {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 50px;
-    }
+    h1{font-size:20px;color:#e9e9e9}
+    p.sub{color:#909090;font-size:13px;margin-top:4px}
 
-    .feature-box {
-      background: rgba(128, 0, 255, 0.15);
-      border: 1px solid #a64dff;
-      border-radius: 12px;
-      padding: 20px;
-      width: 80%;
-      max-width: 500px;
-      box-shadow: 0 0 20px rgba(166, 77, 255, 0.5);
-    }
+    .controls{display:flex;gap:10px;margin-top:12px}
+    input[type=text]{flex:1;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(14,14,14,0.6);color:#e6e6e6;font-size:15px}
+    input::placeholder{color:#7f7f7f}
+    button{padding:12px 18px;border-radius:8px;border:0;background:linear-gradient(90deg,#2b2b2b,#1b1b1b);color:#e6e6e6;font-weight:600;cursor:pointer;letter-spacing:0.6px}
+    button:active{transform:translateY(1px)}
 
-    .feature-box h4 {
-      font-size: 1.3rem;
-      color: #d6aaff;
-      margin-bottom: 10px;
-    }
+    .muted{font-size:12px;color:#787878;margin-top:8px}
 
-    .feature-box p {
-      font-size: 1rem;
-      color: #e7dbff;
-    }
+    /* results */
+    .results{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .panel{background:linear-gradient(180deg, rgba(18,18,18,0.7), rgba(14,14,14,0.55));padding:14px;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+    .k{font-size:12px;color:#9b9b9b}
+    .v{font-size:15px;color:#eaeaea;margin-top:6px;word-break:break-word}
 
-    .download-btn {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      background: #b84dff;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      text-decoration: none;
-      box-shadow: 0 0 20px #a64dff, 0 0 40px #d08aff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+    /* wide panel for raw output */
+    .full{grid-column:1/-1}
 
-    .download-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px #d08aff, 0 0 60px #b84dff;
-    }
+    /* little neon accent */
+    .neon{display:inline-block;padding:3px 8px;border-radius:6px;background:linear-gradient(90deg, rgba(96,68,255,0.06), rgba(255,56,120,0.03));border:1px solid rgba(96,68,255,0.12);color:#cfc9ff;font-weight:700}
 
-    /* Responsive */
-    @media (min-width: 768px) {
-      .features {
-        flex-direction: row;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      .feature-box {
-        width: 250px;
-      }
-    }
+    /* small footer */
+    footer{margin-top:16px;color:#6d6d6d;font-size:12px;display:flex;justify-content:space-between;align-items:center}
+
+    /* mobile tweaks */
+    @media (max-width:520px){.results{grid-template-columns:1fr}}
+
+    /* scanline animation (not falling code) */
+    .scanline{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(transparent 92%, rgba(255,255,255,0.02) 96%);mix-blend-mode:overlay;opacity:0.14;animation:scan 6s linear infinite}
+    @keyframes scan{0%{background-position:0 -40%}100%{background-position:0 140%}}
+
+    /* hint for error */
+    .error{color:#ff7b7b}
   </style>
 </head>
 <body>
-  <h1>NyXora</h1>
-  <h2>The Ultimate Roblox Multi-Tool</h2>
+  <div class="card" role="main">
+    <div class="scanline" aria-hidden="true"></div>
 
-  <h3>Why NyXora?</h3>
-  <div class="features">
-    <div class="feature-box">
-      <h4>Lightning Fast</h4>
-      <p>NyXora delivers unmatched speed and multi-instance performance.</p>
+    <header>
+      <div class="logo" aria-hidden="true"><strong>ST</strong></div>
+      <div>
+        <h1>ShadowTrace — IP Lookup</h1>
+        <p class="sub">Enter an IP (v4 or v6) or leave blank to check your own. No flashy neon matrix — just dark, grimy vibes.</p>
+      </div>
+    </header>
+
+    <div class="controls" aria-hidden="false">
+      <input id="ipInput" type="text" placeholder="Enter IP (e.g. 8.8.8.8) or leave empty for your IP" aria-label="IP input" />
+      <button id="goBtn">Continue</button>
     </div>
-    <div class="feature-box">
-      <h4>All-In-One Power</h4>
-      <p>Everything you need for Roblox in one futuristic tool.</p>
+    <div class="muted">Tip: this uses public lookup services. The site runs entirely in your browser and asks external APIs for info.</div>
+
+    <div id="resultsWrap" class="results" hidden>
+      <div class="panel">
+        <div class="k">IP</div>
+        <div id="r_ip" class="v"></div>
+        <div class="k">ISP / Org</div>
+        <div id="r_org" class="v"></div>
+        <div class="k">ASN</div>
+        <div id="r_asn" class="v"></div>
+      </div>
+
+      <div class="panel">
+        <div class="k">Location</div>
+        <div id="r_loc" class="v"></div>
+        <div class="k">Timezone</div>
+        <div id="r_tz" class="v"></div>
+        <div class="k">Local time</div>
+        <div id="r_time" class="v"></div>
+        <div class="k">Day / Night</div>
+        <div id="r_daynight" class="v"></div>
+      </div>
+
+      <div class="panel">
+        <div class="k">Network</div>
+        <div id="r_network" class="v"></div>
+        <div class="k">Latitude, Longitude</div>
+        <div id="r_latlon" class="v"></div>
+      </div>
+
+      <div class="panel">
+        <div class="k">Raw provider response</div>
+        <pre id="r_raw" class="v" style="max-height:160px;overflow:auto;background:transparent;border-radius:6px;padding:6px"></pre>
+      </div>
+
     </div>
-    <div class="feature-box">
-      <h4>Neon Aesthetic</h4>
-      <p>Designed with a glowing, cyberpunk-inspired UI to match your vibe.</p>
-    </div>
+
+    <div id="msg" style="margin-top:12px;color:#bdbdbd"></div>
+
+    <footer>
+      <div>Made for labs — <span class="neon">ShadowTrace</span></div>
+      <div style="opacity:0.8;font-size:11px">APIs used: ipapi.co (primary) · fallback: ipwhois.app</div>
+    </footer>
   </div>
 
-  <a href="https://discord.com/channels/@me/1414010351980118049/1414010412416110665" class="download-btn">Download NyXora</a>
+  <script>
+    // Single-file IP lookup. No external libs.
+    const goBtn = document.getElementById('goBtn');
+    const ipInput = document.getElementById('ipInput');
+    const resultsWrap = document.getElementById('resultsWrap');
+    const msg = document.getElementById('msg');
+
+    const setText = (id, txt) => { const el = document.getElementById(id); if(el) el.textContent = txt ?? '' };
+
+    async function lookup(ip){
+      resultsWrap.hidden = true;
+      msg.textContent = 'Querying...';
+
+      // primary: ipapi.co, fallback: ipwhois.app
+      const basePrimary = ip ? `https://ipapi.co/${encodeURIComponent(ip)}/json/` : 'https://ipapi.co/json/';
+      const baseFallback = ip ? `https://ipwhois.app/json/${encodeURIComponent(ip)}` : 'https://ipwhois.app/json/';
+
+      try{
+        let res = await fetch(basePrimary, {cache: 'no-store'});
+        if(!res.ok) throw new Error('primary failed');
+        let data = await res.json();
+
+        // ipapi.co returns error field sometimes
+        if(data.error) throw new Error(data.reason || 'primary error');
+
+        populateFromIpapi(data);
+        msg.textContent = '';
+        resultsWrap.hidden = false;
+        return;
+      }catch(e){
+        // try fallback
+        try{
+          msg.textContent = 'Primary failed — trying fallback...';
+          let r2 = await fetch(baseFallback, {cache: 'no-store'});
+          if(!r2.ok) throw new Error('fallback failed');
+          let d2 = await r2.json();
+          populateFromIphwhois(d2);
+          msg.textContent = '';
+          resultsWrap.hidden = false;
+          return;
+        }catch(err){
+          msg.innerHTML = `<span class="error">Lookup failed: ${err.message}</span>`;
+          console.error(err);
+        }
+      }
+    }
+
+    function populateFromIpapi(d){
+      // ipapi.co fields: ip, city, region, country_name, org, timezone, latitude, longitude
+      setText('r_ip', d.ip || '—');
+      setText('r_org', d.org || (d.company && d.company.name) || '—');
+      setText('r_asn', d.asn || '—');
+      setText('r_loc', [d.city, d.region, d.country_name].filter(Boolean).join(', ') || '—');
+      setText('r_tz', d.timezone || '—');
+
+      // compute local time from timezone if available
+      let localTimeStr = '—';
+      try{
+        if(d.timezone){
+          const now = new Date().toLocaleString('en-US', {timeZone: d.timezone});
+          localTimeStr = now;
+          const hour = new Date().toLocaleString('en-US', {timeZone: d.timezone, hour:'2-digit', hour12:false});
+          const h = parseInt(hour,10);
+          setText('r_daynight', (h>=6 && h<19) ? 'Day' : 'Night');
+        } else {
+          setText('r_daynight','Unknown');
+        }
+      }catch(e){
+        setText('r_daynight','Unknown');
+      }
+
+      setText('r_time', localTimeStr);
+      setText('r_network', d.network || (d.org ? d.org : '—'));
+      setText('r_latlon', (d.latitude && d.longitude) ? `${d.latitude}, ${d.longitude}` : '—');
+      document.getElementById('r_raw').textContent = JSON.stringify(d, null, 2);
+    }
+
+    function populateFromIphwhois(d){
+      // ipwhois.app fields differ
+      setText('r_ip', d.ip || '—');
+      setText('r_org', d.org || d.connection && d.connection.org || '—');
+      setText('r_asn', d.asn || '—');
+      setText('r_loc', [d.city, d.region, d.country].filter(Boolean).join(', ') || '—');
+      setText('r_tz', d.timezone && d.timezone.id ? d.timezone.id : (d.timezone || '—'));
+
+      try{
+        if(d.timezone && (d.timezone.id || d.timezone)){
+          const tz = d.timezone.id || d.timezone;
+          const now = new Date().toLocaleString('en-US', {timeZone: tz});
+          setText('r_time', now);
+          const hour = new Date().toLocaleString('en-US', {timeZone: tz, hour:'2-digit', hour12:false});
+          const h = parseInt(hour,10);
+          setText('r_daynight', (h>=6 && h<19) ? 'Day' : 'Night');
+        }
+      }catch(e){ setText('r_daynight','Unknown'); }
+
+      setText('r_network', d.connection && d.connection.isp ? d.connection.isp : (d.org || '—'));
+      setText('r_latlon', (d.latitude && d.longitude) ? `${d.latitude}, ${d.longitude}` : (d.location && d.location.coordinates ? d.location.coordinates : '—'));
+      document.getElementById('r_raw').textContent = JSON.stringify(d, null, 2);
+    }
+
+    goBtn.addEventListener('click', ()=>{
+      const ip = ipInput.value.trim();
+      lookup(ip);
+    });
+
+    ipInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') goBtn.click(); });
+
+    // optional: check example quick link from querystring (?ip=...)
+    (function(){
+      const params = new URLSearchParams(location.search);
+      if(params.has('ip')){
+        ipInput.value = params.get('ip');
+        // don't auto-run to avoid surprise network calls; user can press Continue.
+      }
+    })();
+  </script>
 </body>
 </html>
